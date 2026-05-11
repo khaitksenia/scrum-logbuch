@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Scrum-Logbuch — Ksenia</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500&display=swap');
+
+  :root {
+    --bg: #f7f6f2;
+    --surface: #ffffff;
+    --border: #e2e0d8;
+    --text: #1a1a18;
+    --muted: #888780;
+    --accent: #1a1a18;
+    --t0: #EEEDFE; --t0c: #3C3489;
+    --t1: #E1F5EE; --t1c: #085041;
+    --t2: #FAEEDA; --t2c: #633806;
+    --t3: #E6F1FB; --t3c: #0C447C;
+    --t4: #FAECE7; --t4c: #712B13;
+    --t5: #FBEAF0; --t5c: #72243E;
+    --t6: #EAF3DE; --t6c: #27500A;
+    --t7: #F1EFE8; --t7c: #444441;
+    --t8: #FCEBEB; --t8c: #791F1F;
+    --t9: #EEEDFE; --t9c: #26215C;
+    --ta: #E1F5EE; --tac: #04342C;
+    --tb: #FAEEDA; --tbc: #412402;
+    --tc: #F1EFE8; --tcc: #2C2C2A;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'IBM Plex Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    padding: 2rem 1rem;
+  }
+
+  header {
+    max-width: 760px;
+    margin: 0 auto 2rem;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 1.5rem;
+  }
+
+  header h1 {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 1.4rem;
+    font-weight: 500;
+    letter-spacing: -0.02em;
+  }
+
+  header p {
+    font-size: 0.85rem;
+    color: var(--muted);
+    margin-top: 4px;
+    font-family: 'IBM Plex Mono', monospace;
+  }
+
+  .main { max-width: 760px; margin: 0 auto; display: flex; flex-direction: column; gap: 1.5rem; }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 1.25rem 1.5rem;
+  }
+
+  .section-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.7rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+    margin-bottom: 1rem;
+  }
+
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+
+  .field label {
+    display: block;
+    font-size: 0.75rem;
+    color: var(--muted);
+    margin-bottom: 5px;
+    font-family: 'IBM Plex Mono', monospace;
+  }
+
+  select, textarea {
+    width: 100%;
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 0.875rem;
+    color: var(--text);
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    padding: 8px 10px;
+    outline: none;
+    transition: border-color 0.15s;
+  }
+
+  select:focus, textarea:focus { border-color: var(--text); }
+
+  textarea { resize: vertical; min-height: 80px; line-height: 1.6; }
+
+  .btn-row { display: flex; gap: 8px; margin-top: 12px; }
+
+  button {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.8rem;
+    padding: 8px 18px;
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    background: none;
+    color: var(--text);
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+
+  button:hover { background: var(--bg); }
+  button.primary { background: var(--text); color: #fff; border-color: var(--text); }
+  button.primary:hover { background: #333; }
+
+  .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+
+  .stat {
+    background: var(--bg);
+    border-radius: 3px;
+    padding: 12px;
+    text-align: center;
+  }
+
+  .stat-n { font-family: 'IBM Plex Mono', monospace; font-size: 1.5rem; font-weight: 500; }
+  .stat-l { font-size: 0.72rem; color: var(--muted); margin-top: 3px; }
+
+  .filter-row { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 1rem; }
+
+  .fbtn {
+    font-size: 0.72rem;
+    padding: 3px 10px;
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    background: none;
+    color: var(--muted);
+    cursor: pointer;
+    font-family: 'IBM Plex Mono', monospace;
+    transition: all 0.15s;
+  }
+
+  .fbtn.active {
+    background: var(--text);
+    color: #fff;
+    border-color: var(--text);
+  }
+
+  .entry {
+    border-bottom: 1px solid var(--border);
+    padding: 14px 0;
+  }
+
+  .entry:last-child { border-bottom: none; }
+
+  .entry-top { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 8px; }
+
+  .badge {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.68rem;
+    font-weight: 500;
+    padding: 2px 8px;
+    border-radius: 20px;
+  }
+
+  .entry-text { font-size: 0.9rem; line-height: 1.65; color: var(--text); }
+
+  .entry-insight {
+    font-size: 0.84rem;
+    color: var(--muted);
+    border-left: 2px solid var(--border);
+    padding-left: 10px;
+    margin-top: 8px;
+    line-height: 1.6;
+  }
+
+  .entry-insight::before {
+    content: '→ ';
+    font-family: 'IBM Plex Mono', monospace;
+  }
+
+  .meta { font-family: 'IBM Plex Mono', monospace; font-size: 0.72rem; color: var(--muted); }
+
+  .del-btn {
+    margin-left: auto;
+    font-size: 0.68rem;
+    padding: 2px 6px;
+    border: none;
+    background: none;
+    color: var(--muted);
+    cursor: pointer;
+  }
+
+  .del-btn:hover { color: #A32D2D; background: none; }
+
+  .empty { text-align: center; padding: 2rem; color: var(--muted); font-size: 0.85rem; font-family: 'IBM Plex Mono', monospace; }
+
+  @media (max-width: 540px) {
+    .form-grid { grid-template-columns: 1fr; }
+    .stats { grid-template-columns: 1fr 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Scrum-Logbuch</h1>
+  <p>Ksenia · MTM 25-2/26-1 · Provadis</p>
+</header>
+
+<div class="main">
+
+  <div class="card">
+    <div class="section-label">Neuer Eintrag</div>
+    <div class="form-grid">
+      <div class="field">
+        <label>Sprint</label>
+        <select id="sprint">
+          <option>Sprint 1 — 06.05–19.05</option>
+          <option>Sprint 2 — 20.05–02.06</option>
+          <option>Sprint 3 — 03.06–16.06</option>
+          <option>Sprint 4 — 17.06–30.06</option>
+          <option>Sprint 5 — 01.07–14.07</option>
+          <option>Sprint 6 — 15.07–28.07</option>
+          <option>Sprint 7 — 29.07–11.08</option>
+          <option>Sprint 8 — 12.08–25.08</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Scrum-Thema</label>
+        <select id="thema">
+          <option value="0">Transparenz</option>
+          <option value="1">Inspektion</option>
+          <option value="2">Adaption</option>
+          <option value="3">Sprint Planning</option>
+          <option value="4">Daily Scrum</option>
+          <option value="5">Sprint Review</option>
+          <option value="6">Retrospektive</option>
+          <option value="7">Rollen (PO / SM / Dev)</option>
+          <option value="8">Artefakte (Backlog / DoD)</option>
+          <option value="9">Scrum-Werte</option>
+          <option value="a">Teamdynamik</option>
+          <option value="b">KI-Einsatz</option>
+          <option value="c">Allgemein</option>
+        </select>
+      </div>
+    </div>
+    <div class="field" style="margin-bottom:10px">
+      <label>Erfahrung / Beobachtung</label>
+      <textarea id="text" placeholder="Was ist passiert? Was habe ich beobachtet?"></textarea>
+    </div>
+    <div class="field">
+      <label>Insight / Lesson Learnt</label>
+      <textarea id="insight" placeholder="Was nehme ich daraus mit? Was würde ich beim nächsten Mal anders machen?" style="min-height:60px"></textarea>
+    </div>
+    <div class="btn-row">
+      <button class="primary" onclick="addEntry()">Speichern</button>
+      <button onclick="exportMD()">Als Markdown exportieren</button>
+      <button onclick="clearAll()">Alles löschen</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="stats">
+      <div class="stat">
+        <div class="stat-n" id="s-all">0</div>
+        <div class="stat-l">Einträge gesamt</div>
+      </div>
+      <div class="stat">
+        <div class="stat-n" id="s-insight">0</div>
+        <div class="stat-l">Mit Insight</div>
+      </div>
+      <div class="stat">
+        <div class="stat-n" id="s-sprints">0</div>
+        <div class="stat-l">Sprints</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="section-label">Logbuch</div>
+    <div class="filter-row" id="filters">
+      <button class="fbtn active" onclick="setFilter('all',this)">Alle</button>
+      <button class="fbtn" onclick="setFilter('0',this)">Transparenz</button>
+      <button class="fbtn" onclick="setFilter('1',this)">Inspektion</button>
+      <button class="fbtn" onclick="setFilter('2',this)">Adaption</button>
+      <button class="fbtn" onclick="setFilter('3',this)">Planning</button>
+      <button class="fbtn" onclick="setFilter('4',this)">Daily</button>
+      <button class="fbtn" onclick="setFilter('5',this)">Review</button>
+      <button class="fbtn" onclick="setFilter('6',this)">Retro</button>
+      <button class="fbtn" onclick="setFilter('7',this)">Rollen</button>
+      <button class="fbtn" onclick="setFilter('8',this)">Artefakte</button>
+      <button class="fbtn" onclick="setFilter('9',this)">Werte</button>
+      <button class="fbtn" onclick="setFilter('a',this)">Teamdynamik</button>
+      <button class="fbtn" onclick="setFilter('b',this)">KI-Einsatz</button>
+      <button class="fbtn" onclick="setFilter('c',this)">Allgemein</button>
+    </div>
+    <div id="entries"><div class="empty">// noch keine Einträge</div></div>
+  </div>
+
+</div>
+
+<script>
+const THEMEN = {
+  '0':'Transparenz','1':'Inspektion','2':'Adaption',
+  '3':'Sprint Planning','4':'Daily Scrum','5':'Sprint Review',
+  '6':'Retrospektive','7':'Rollen (PO/SM/Dev)','8':'Artefakte',
+  '9':'Scrum-Werte','a':'Teamdynamik','b':'KI-Einsatz','c':'Allgemein'
+};
+const COLORS = {
+  '0':['#EEEDFE','#3C3489'],'1':['#E1F5EE','#085041'],'2':['#FAEEDA','#633806'],
+  '3':['#E6F1FB','#0C447C'],'4':['#FAECE7','#712B13'],'5':['#FBEAF0','#72243E'],
+  '6':['#EAF3DE','#27500A'],'7':['#F1EFE8','#444441'],'8':['#FCEBEB','#791F1F'],
+  '9':['#EEEDFE','#26215C'],'a':['#E1F5EE','#04342C'],'b':['#FAEEDA','#412402'],
+  'c':['#F1EFE8','#2C2C2A']
+};
+
+let entries = JSON.parse(localStorage.getItem('scrum_logbuch') || '[]');
+let filter = 'all';
+
+function addEntry() {
+  const text = document.getElementById('text').value.trim();
+  if (!text) { document.getElementById('text').focus(); return; }
+  entries.unshift({
+    id: Date.now(),
+    sprint: document.getElementById('sprint').value,
+    thema: document.getElementById('thema').value,
+    text,
+    insight: document.getElementById('insight').value.trim(),
+    date: new Date().toLocaleDateString('de-DE')
+  });
+  persist();
+  document.getElementById('text').value = '';
+  document.getElementById('insight').value = '';
+  render();
+}
+
+function deleteEntry(id) {
+  if (!confirm('Eintrag löschen?')) return;
+  entries = entries.filter(e => e.id !== id);
+  persist();
+  render();
+}
+
+function clearAll() {
+  if (!confirm('Alle Einträge löschen?')) return;
+  entries = [];
+  persist();
+  render();
+}
+
+function persist() {
+  localStorage.setItem('scrum_logbuch', JSON.stringify(entries));
+}
+
+function setFilter(f, btn) {
+  filter = f;
+  document.querySelectorAll('.fbtn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  render();
+}
+
+function render() {
+  const visible = filter === 'all' ? entries : entries.filter(e => e.thema === filter);
+  const el = document.getElementById('entries');
+
+  if (!visible.length) {
+    el.innerHTML = '<div class="empty">// keine Einträge für diesen Filter</div>';
+  } else {
+    el.innerHTML = visible.map(e => {
+      const [bg, fg] = COLORS[e.thema] || ['#F1EFE8','#444441'];
+      return `
+        <div class="entry">
+          <div class="entry-top">
+            <span class="badge" style="background:${bg};color:${fg}">${THEMEN[e.thema]}</span>
+            <span class="meta">${e.sprint}</span>
+            <span class="meta">${e.date}</span>
+            <button class="del-btn" onclick="deleteEntry(${e.id})">× entfernen</button>
+          </div>
+          <div class="entry-text">${e.text}</div>
+          ${e.insight ? `<div class="entry-insight">${e.insight}</div>` : ''}
+        </div>`;
+    }).join('');
+  }
+
+  document.getElementById('s-all').textContent = entries.length;
+  document.getElementById('s-insight').textContent = entries.filter(e => e.insight).length;
+  document.getElementById('s-sprints').textContent = new Set(entries.map(e => e.sprint)).size;
+}
+
+function exportMD() {
+  if (!entries.length) { alert('Noch keine Einträge.'); return; }
+  const lines = ['# Scrum-Logbuch — Ksenia', ''];
+  const sprints = [...new Set(entries.map(e => e.sprint))];
+  sprints.forEach(s => {
+    lines.push(`## ${s}`, '');
+    entries.filter(e => e.sprint === s).forEach(e => {
+      lines.push(`### [${THEMEN[e.thema]}] — ${e.date}`);
+      lines.push(e.text, '');
+      if (e.insight) lines.push(`> **Insight:** ${e.insight}`, '');
+    });
+  });
+  const blob = new Blob([lines.join('\n')], { type: 'text/markdown' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'scrum-logbuch-ksenia.md';
+  a.click();
+}
+
+render();
+</script>
+</body>
+</html>
